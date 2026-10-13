@@ -26,7 +26,7 @@ function VetQueue() {
   if (!isVet) return <p className="rounded-2xl border bg-card p-6">This area is for registered veterinarians only.</p>;
   const list = data
     .filter((r) => (filter === "open" ? r.status !== "closed" && r.status !== "assessed" : filter === "all" ? true : r.status === filter))
-    .sort((a, b) => order[a.risk_level] - order[b.risk_level] || b.created_at.localeCompare(a.created_at));
+    .sort((a, b) => (order[a.risk_level] ?? 9) - (order[b.risk_level] ?? 9) || b.created_at.localeCompare(a.created_at));
   const counts = { urgent: data.filter((r) => r.risk_level === "urgent" && r.status !== "closed").length, high: data.filter((r) => r.risk_level === "high" && r.status !== "closed").length };
 
   return (

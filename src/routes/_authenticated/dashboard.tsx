@@ -46,7 +46,7 @@ function Dashboard() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat icon={<PawPrint />} label={t("animals")} value={total} to="/animals" />
-        <Stat icon={<HeartPulse />} label={lang === "hi" ? "निगरानी में" : "Under observation"} value={watch} to="/animals" tone={watch ? "warn" : undefined} />
+        <Stat icon={<HeartPulse />} label={lang === "hi" ? "निगरानी में" : "Under observation"} value={watch} to="/animals" {...(watch ? { tone: "warn" as const } : {})} />
         <Stat icon={<Syringe />} label={lang === "hi" ? "30 दिन में टीके" : "Vaccines due (30 days)"} value={data?.due.length ?? 0} to="/vaccinations" />
       </div>
 

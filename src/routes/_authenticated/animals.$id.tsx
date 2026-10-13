@@ -31,7 +31,7 @@ function AnimalPage() {
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
   const a = data?.animal;
   if (!a) return <p>Animal not found. <Link to="/animals" className="text-primary">Back</Link></p>;
-  const h = healthLabel[a.health_status] ?? healthLabel.healthy;
+  const h = healthLabel[a.health_status] ?? healthLabel["healthy"]!;
 
   return (
     <div className="space-y-6">

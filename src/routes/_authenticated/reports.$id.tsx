@@ -86,14 +86,14 @@ function AssessmentForm({ reportId, status }: { reportId: string; status: string
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.from("assessments").insert({ report_id: reportId, vet_id: user!.id, provisional_diagnosis: f.provisional_diagnosis, treatment: f.treatment || null, advice: f.advice || null, follow_up_date: f.follow_up_date || null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Assessment sent to farmer");
     setF({ provisional_diagnosis: "", treatment: "", advice: "", follow_up_date: "" });
     qc.invalidateQueries();
   };
   const setStatus = async (s: string) => {
     const { error } = await supabase.from("symptom_reports").update({ status: s }).eq("id", reportId);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries();
   };
   return (

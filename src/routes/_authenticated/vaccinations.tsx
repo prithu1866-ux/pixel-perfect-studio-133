@@ -78,7 +78,7 @@ export function VaccinationDialog({ animalId }: { animalId?: string }) {
   });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
   const preset = (i: number) => {
-    const p = PRESETS[i];
+    const p = PRESETS[i]!;
     let next = "";
     if (p.months && f.administered_on) {
       const d = new Date(f.administered_on);
@@ -89,12 +89,12 @@ export function VaccinationDialog({ animalId }: { animalId?: string }) {
   };
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!f.animal_id) return toast.error(lang === "hi" ? "पशु चुनें" : "Choose an animal");
+    if (!f.animal_id) { toast.error(lang === "hi" ? "पशु चुनें" : "Choose an animal"); return; }
     const { error } = await supabase.from("vaccinations").insert({
       owner_id: user!.id, animal_id: f.animal_id, vaccine: f.vaccine, disease: f.disease || null,
       administered_on: f.administered_on || null, next_due_on: f.next_due_on || null, administered_by: f.administered_by || null,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(lang === "hi" ? "टीका दर्ज हुआ" : "Vaccination recorded");
     qc.invalidateQueries();
     setOpen(false);

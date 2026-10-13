@@ -54,7 +54,7 @@ function Animals() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((a) => {
-            const h = healthLabel[a.health_status] ?? healthLabel.healthy;
+            const h = healthLabel[a.health_status] ?? healthLabel["healthy"]!;
             return (
               <Link key={a.id} to="/animals/$id" params={{ id: a.id }} className="rounded-2xl border bg-card p-5 shadow-card hover:border-primary">
                 <div className="flex items-start justify-between">
@@ -97,7 +97,7 @@ export function AnimalDialog({ animal }: { animal?: AnimalRow }) {
     const { error } = animal
       ? await supabase.from("animals").update(row).eq("id", animal.id)
       : await supabase.from("animals").insert({ ...row, owner_id: user!.id });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(lang === "hi" ? "सहेजा गया" : "Saved");
     qc.invalidateQueries();
     setOpen(false);
