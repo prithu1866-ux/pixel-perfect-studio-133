@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,6 +100,7 @@ function AuthPage() {
         </form>
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><div className="h-px flex-1 bg-border" />or<div className="h-px flex-1 bg-border" /></div>
         <Button variant="outline" size="lg" className="h-11 w-full" onClick={google}>Continue with Google</Button>
+        <p className="mt-4 text-center text-sm text-muted-foreground">Veterinarian? <Link to="/vet-login" className="text-primary">Open the vet portal</Link></p>
         <button onClick={() => setMode(mode === "in" ? "up" : "in")} className="mt-5 w-full text-center text-sm text-primary hover:underline">
           {mode === "in" ? (lang === "hi" ? "नया खाता बनाएँ" : "New here? Create an account") : lang === "hi" ? "पहले से खाता है? लॉग इन" : "Already have an account? Sign in"}
         </button>

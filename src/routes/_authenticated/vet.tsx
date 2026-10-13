@@ -20,7 +20,7 @@ function VetQueue() {
   const { data = [] } = useQuery({
     queryKey: ["vet-queue"],
     enabled: isVet,
-    queryFn: async () => (await supabase.from("symptom_reports").select("id, risk_level, status, created_at, district, affected_count, animals(name, species)").order("created_at", { ascending: false }).limit(200)).data ?? [],
+    queryFn: async () => (await supabase.from("symptom_reports").select("id, risk_level, status, created_at, district, affected_count, symptoms, temperature_c, animals(name, species)").order("created_at", { ascending: false }).limit(200)).data ?? [],
   });
   if (loading) return null;
   if (!isVet) return <p className="rounded-2xl border bg-card p-6">This area is for registered veterinarians only.</p>;
@@ -48,7 +48,7 @@ function VetQueue() {
           const a = r.animals as { name: string; species: string } | null;
           return (
             <li key={r.id}><Link to="/reports/$id" params={{ id: r.id }} className="flex items-center justify-between gap-3 p-4 hover:bg-muted">
-              <div><div className="font-medium">{a?.name} · {a?.species}{r.affected_count > 1 ? ` · ${r.affected_count} affected` : ""}</div><div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}{r.district ? ` · ${r.district}` : ""}</div></div>
+              <div><div className="font-medium">{a?.name} · {a?.species}{r.affected_count > 1 ? ` · ${r.affected_count} affected` : ""}</div><div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}{r.district ? ` · ${r.district}` : ""}{r.temperature_c ? ` · ${r.temperature_c}°C` : ""}</div><div className="mt-1 text-xs text-muted-foreground">{r.symptoms.slice(0, 5).map((s) => s.replace(/_/g, " ")).join(", ")}{r.symptoms.length > 5 ? "…" : ""}</div></div>
               <div className="flex gap-2"><StatusPill status={r.status} /><RiskBadge level={r.risk_level} /></div>
             </Link></li>
           );
