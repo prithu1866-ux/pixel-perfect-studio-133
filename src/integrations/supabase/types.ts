@@ -68,6 +68,8 @@ export type Database = {
           created_at: string
           follow_up_date: string | null
           id: string
+          medications: Json
+          priority: string | null
           provisional_diagnosis: string
           report_id: string
           treatment: string | null
@@ -78,6 +80,8 @@ export type Database = {
           created_at?: string
           follow_up_date?: string | null
           id?: string
+          medications?: Json
+          priority?: string | null
           provisional_diagnosis: string
           report_id: string
           treatment?: string | null
@@ -88,6 +92,8 @@ export type Database = {
           created_at?: string
           follow_up_date?: string | null
           id?: string
+          medications?: Json
+          priority?: string | null
           provisional_diagnosis?: string
           report_id?: string
           treatment?: string | null
