@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RiskBadge, StatusPill } from "@/components/RiskBadge";
 import { SpeakButton } from "@/components/VoiceButton";
+import { AiAdvicePanel } from "@/components/AiAdvicePanel";
 
 export const Route = createFileRoute("/_authenticated/reports/$id")({
   head: () => ({ meta: [{ title: "Report details — VETSENSE AI" }, { name: "description", content: "Symptom report and veterinary response." }, { property: "og:title", content: "Report details — VETSENSE AI" }, { property: "og:description", content: "Symptom report and veterinary response." }] }),
@@ -60,35 +61,73 @@ function ReportDetail() {
         {r.suspected_conditions.length > 0 && <p className="mt-2 text-sm">{lang === "hi" ? "संभावित (पुष्टि आवश्यक): " : "Possible (needs confirmation): "}<strong>{r.suspected_conditions.map((d) => { const x = DISEASES.find((z) => z.id === d); return x ? pick(x.name) : d; }).join(", ")}</strong></p>}
       </div>
 
+      {isVet && (
+        <AiAdvicePanel
+          species={animal?.species ?? "cattle"}
+          breed={animal?.breed ?? null}
+          ageMonths={null}
+          symptoms={r.symptoms.map((s) => SYMPTOMS.find((x) => x.id === s)?.en ?? s)}
+          temperatureC={r.temperature_c}
+          durationDays={r.duration_days}
+          affectedCount={r.affected_count}
+          notes={r.notes ?? ""}
+          ruleRisk={r.risk_level}
+        />
+      )}
+
       <section className="rounded-2xl border bg-card p-6 shadow-card">
         <h2 className="flex items-center gap-2 text-lg font-semibold"><Stethoscope className="size-5 text-primary" />{lang === "hi" ? "पशु चिकित्सक की सलाह" : "Veterinarian's response"}</h2>
         {data.assessments.length === 0 && <p className="mt-2 text-sm text-muted-foreground">{lang === "hi" ? "अभी जवाब नहीं आया।" : "Awaiting review."}</p>}
-        {data.assessments.map((a) => (
-          <div key={a.id} className="mt-4 rounded-xl bg-secondary/60 p-4 text-sm">
-            <div className="flex items-center justify-between"><strong className="text-base">{a.provisional_diagnosis}</strong><SpeakButton text={[a.provisional_diagnosis, a.treatment, a.advice].filter(Boolean).join(". ")} /></div>
-            {a.treatment && <p className="mt-2"><b>Treatment:</b> {a.treatment}</p>}
-            {a.advice && <p className="mt-1"><b>Advice:</b> {a.advice}</p>}
-            {a.follow_up_date && <p className="mt-1"><b>Follow-up:</b> {a.follow_up_date}</p>}
-            <p className="mt-2 text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
-          </div>
-        ))}
-        {isVet && <AssessmentForm reportId={r.id} status={r.status} />}
+        {data.assessments.map((a) => {
+          const meds = (a.medications as Med[] | null) ?? [];
+          return (
+            <div key={a.id} className="mt-4 rounded-xl bg-secondary/60 p-4 text-sm">
+              <div className="flex items-center justify-between gap-2">
+                <strong className="text-base">{a.provisional_diagnosis}</strong>
+                <div className="flex items-center gap-2">{a.priority && <RiskBadge level={a.priority} />}<SpeakButton text={[a.provisional_diagnosis, a.treatment, ...meds.map((m) => `${m.name} ${m.dose} ${m.frequency} ${m.duration}`), a.advice].filter(Boolean).join(". ")} /></div>
+              </div>
+              {meds.length > 0 && (
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="text-muted-foreground"><tr><th className="py-1 pr-2">{lang === "hi" ? "दवा" : "Medicine"}</th><th className="pr-2">{lang === "hi" ? "मात्रा" : "Dose"}</th><th className="pr-2">{lang === "hi" ? "कितनी बार" : "How often"}</th><th>{lang === "hi" ? "कितने दिन" : "Duration"}</th></tr></thead>
+                    <tbody>{meds.map((m, i) => <tr key={i} className="border-t"><td className="py-1 pr-2 font-medium">{m.name}</td><td className="pr-2">{m.dose}</td><td className="pr-2">{m.frequency}</td><td>{m.duration}</td></tr>)}</tbody>
+                  </table>
+                </div>
+              )}
+              {a.treatment && <p className="mt-2"><b>Treatment:</b> {a.treatment}</p>}
+              {a.advice && <p className="mt-1"><b>Advice:</b> {a.advice}</p>}
+              {a.follow_up_date && <p className="mt-1"><b>Follow-up:</b> {a.follow_up_date}</p>}
+              <p className="mt-2 text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
+            </div>
+          );
+        })}
+        {isVet && <AssessmentForm reportId={r.id} status={r.status} defaultPriority={r.risk_level} />}
       </section>
     </div>
   );
 }
 
-function AssessmentForm({ reportId, status }: { reportId: string; status: string }) {
+type Med = { name: string; dose: string; frequency: string; duration: string };
+const emptyMed: Med = { name: "", dose: "", frequency: "", duration: "" };
+
+function AssessmentForm({ reportId, status, defaultPriority }: { reportId: string; status: string; defaultPriority: string }) {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [f, setF] = useState({ provisional_diagnosis: "", treatment: "", advice: "", follow_up_date: "" });
-  const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const [f, setF] = useState({ provisional_diagnosis: "", treatment: "", advice: "", follow_up_date: "", priority: defaultPriority });
+  const [meds, setMeds] = useState<Med[]>([{ ...emptyMed }]);
+  const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
+  const setMed = (i: number, k: keyof Med, v: string) => setMeds(meds.map((m, j) => (j === i ? { ...m, [k]: v.slice(0, 100) } : m)));
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.from("assessments").insert({ report_id: reportId, vet_id: user!.id, provisional_diagnosis: f.provisional_diagnosis, treatment: f.treatment || null, advice: f.advice || null, follow_up_date: f.follow_up_date || null });
+    const medications = meds.filter((m) => m.name.trim());
+    const { error } = await supabase.from("assessments").insert({
+      report_id: reportId, vet_id: user!.id, provisional_diagnosis: f.provisional_diagnosis, treatment: f.treatment || null,
+      advice: f.advice || null, follow_up_date: f.follow_up_date || null, priority: f.priority, medications,
+    });
     if (error) { toast.error(error.message); return; }
     toast.success("Assessment sent to farmer");
-    setF({ provisional_diagnosis: "", treatment: "", advice: "", follow_up_date: "" });
+    setF({ ...f, provisional_diagnosis: "", treatment: "", advice: "", follow_up_date: "" });
+    setMeds([{ ...emptyMed }]);
     qc.invalidateQueries();
   };
   const setStatus = async (s: string) => {
@@ -99,17 +138,38 @@ function AssessmentForm({ reportId, status }: { reportId: string; status: string
   return (
     <form onSubmit={save} className="mt-6 space-y-3 border-t pt-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-semibold">Clinical assessment</h3>
+        <h3 className="font-semibold">Clinical assessment & prescription</h3>
         <div className="flex gap-2">
           {status === "submitted" && <Button type="button" variant="outline" size="sm" onClick={() => setStatus("under_review")}>Mark under review</Button>}
           {status !== "closed" && <Button type="button" variant="ghost" size="sm" onClick={() => setStatus("closed")}>Close case</Button>}
         </div>
       </div>
-      <div><Label>Provisional diagnosis</Label><Input required maxLength={200} value={f.provisional_diagnosis} onChange={set("provisional_diagnosis")} /></div>
-      <div><Label>Treatment</Label><textarea maxLength={1000} value={f.treatment} onChange={set("treatment")} className="mt-1 min-h-16 w-full rounded-md border bg-background p-2 text-sm" /></div>
+      <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
+        <div><Label>Provisional diagnosis</Label><Input required maxLength={200} value={f.provisional_diagnosis} onChange={set("provisional_diagnosis")} /></div>
+        <div><Label>Case priority</Label>
+          <select value={f.priority} onChange={set("priority")} className="mt-1 h-9 w-full rounded-md border bg-background px-3 text-sm">
+            <option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+          </select></div>
+      </div>
+      <div>
+        <Label>Medications</Label>
+        <div className="mt-1 space-y-2">
+          {meds.map((m, i) => (
+            <div key={i} className="grid grid-cols-2 gap-2 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+              <Input placeholder="Medicine" value={m.name} onChange={(e) => setMed(i, "name", e.target.value)} />
+              <Input placeholder="Dose" value={m.dose} onChange={(e) => setMed(i, "dose", e.target.value)} />
+              <Input placeholder="e.g. twice daily" value={m.frequency} onChange={(e) => setMed(i, "frequency", e.target.value)} />
+              <Input placeholder="e.g. 5 days" value={m.duration} onChange={(e) => setMed(i, "duration", e.target.value)} />
+              <Button type="button" variant="ghost" size="sm" onClick={() => setMeds(meds.length > 1 ? meds.filter((_, j) => j !== i) : [{ ...emptyMed }])}>Remove</Button>
+            </div>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={() => setMeds([...meds, { ...emptyMed }])}>+ Add medicine</Button>
+        </div>
+      </div>
+      <div><Label>Treatment notes</Label><textarea maxLength={1000} value={f.treatment} onChange={set("treatment")} className="mt-1 min-h-16 w-full rounded-md border bg-background p-2 text-sm" /></div>
       <div><Label>Advice to farmer</Label><textarea maxLength={1000} value={f.advice} onChange={set("advice")} className="mt-1 min-h-16 w-full rounded-md border bg-background p-2 text-sm" /></div>
       <div className="max-w-xs"><Label>Follow-up date</Label><Input type="date" value={f.follow_up_date} onChange={set("follow_up_date")} /></div>
-      <Button type="submit">Send assessment</Button>
+      <Button type="submit">Send to farmer</Button>
     </form>
   );
 }

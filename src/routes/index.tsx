@@ -33,6 +33,7 @@ function Index() {
         <div className="rounded-xl bg-background/90 px-3 py-1.5"><Logo /></div>
         <div className="flex items-center gap-2">
           <LangToggle />
+          <Link to="/vet-login" className="hidden rounded-md bg-background/90 px-3 py-2 text-sm font-medium text-primary-deep sm:inline-block">Vet portal</Link>
           <Button asChild variant="secondary"><Link to="/auth">{t("signIn")}</Link></Button>
         </div>
       </header>
