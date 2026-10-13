@@ -14,9 +14,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedReportRouteImport } from './routes/_authenticated/report'
 import { Route as AuthenticatedVaccinationsRouteImport } from './routes/_authenticated/vaccinations'
+import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/vet'
 import { Route as AuthenticatedAnimalsIndexRouteImport } from './routes/_authenticated/animals.index'
 import { Route as AuthenticatedAnimalsIdRouteImport } from './routes/_authenticated/animals.$id'
+import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
+import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,12 +47,28 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportRoute = AuthenticatedReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedVaccinationsRoute =
   AuthenticatedVaccinationsRouteImport.update({
     id: '/vaccinations',
     path: '/vaccinations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedVetRoute = AuthenticatedVetRouteImport.update({
+  id: '/vet',
+  path: '/vet',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAnimalsIndexRoute =
   AuthenticatedAnimalsIndexRouteImport.update({
     id: '/animals/',
@@ -59,24 +80,45 @@ const AuthenticatedAnimalsIdRoute = AuthenticatedAnimalsIdRouteImport.update({
   path: '/animals/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportsIndexRoute =
+  AuthenticatedReportsIndexRouteImport.update({
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsIdRoute = AuthenticatedReportsIdRouteImport.update({
+  id: '/reports/$id',
+  path: '/reports/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/report': typeof AuthenticatedReportRoute
   '/vaccinations': typeof AuthenticatedVaccinationsRoute
+  '/vet': typeof AuthenticatedVetRoute
   '/animals/$id': typeof AuthenticatedAnimalsIdRoute
+  '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/animals/': typeof AuthenticatedAnimalsIndexRoute
+  '/reports/': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/report': typeof AuthenticatedReportRoute
   '/vaccinations': typeof AuthenticatedVaccinationsRoute
+  '/vet': typeof AuthenticatedVetRoute
   '/animals/$id': typeof AuthenticatedAnimalsIdRoute
+  '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/animals': typeof AuthenticatedAnimalsIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,9 +127,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/report': typeof AuthenticatedReportRoute
   '/_authenticated/vaccinations': typeof AuthenticatedVaccinationsRoute
+  '/_authenticated/vet': typeof AuthenticatedVetRoute
   '/_authenticated/animals/$id': typeof AuthenticatedAnimalsIdRoute
+  '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/animals/': typeof AuthenticatedAnimalsIndexRoute
+  '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,18 +143,28 @@ export interface FileRouteTypes {
     | '/auth'
     | '/knowledge'
     | '/dashboard'
+    | '/notifications'
+    | '/report'
     | '/vaccinations'
+    | '/vet'
     | '/animals/$id'
+    | '/reports/$id'
     | '/animals/'
+    | '/reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/knowledge'
     | '/dashboard'
+    | '/notifications'
+    | '/report'
     | '/vaccinations'
+    | '/vet'
     | '/animals/$id'
+    | '/reports/$id'
     | '/animals'
+    | '/reports'
   id:
     | '__root__'
     | '/'
@@ -115,9 +172,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/knowledge'
     | '/_authenticated/dashboard'
+    | '/_authenticated/notifications'
+    | '/_authenticated/report'
     | '/_authenticated/vaccinations'
+    | '/_authenticated/vet'
     | '/_authenticated/animals/$id'
+    | '/_authenticated/reports/$id'
     | '/_authenticated/animals/'
+    | '/_authenticated/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,11 +226,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/report': {
+      id: '/_authenticated/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof AuthenticatedReportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vaccinations': {
       id: '/_authenticated/vaccinations'
       path: '/vaccinations'
       fullPath: '/vaccinations'
       preLoaderRoute: typeof AuthenticatedVaccinationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vet': {
+      id: '/_authenticated/vet'
+      path: '/vet'
+      fullPath: '/vet'
+      preLoaderRoute: typeof AuthenticatedVetRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/animals/': {
@@ -185,21 +268,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnimalsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports/': {
+      id: '/_authenticated/reports/'
+      path: '/reports'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/$id': {
+      id: '/_authenticated/reports/$id'
+      path: '/reports/$id'
+      fullPath: '/reports/$id'
+      preLoaderRoute: typeof AuthenticatedReportsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedReportRoute: typeof AuthenticatedReportRoute
   AuthenticatedVaccinationsRoute: typeof AuthenticatedVaccinationsRoute
+  AuthenticatedVetRoute: typeof AuthenticatedVetRoute
   AuthenticatedAnimalsIdRoute: typeof AuthenticatedAnimalsIdRoute
+  AuthenticatedReportsIdRoute: typeof AuthenticatedReportsIdRoute
   AuthenticatedAnimalsIndexRoute: typeof AuthenticatedAnimalsIndexRoute
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedReportRoute: AuthenticatedReportRoute,
   AuthenticatedVaccinationsRoute: AuthenticatedVaccinationsRoute,
+  AuthenticatedVetRoute: AuthenticatedVetRoute,
   AuthenticatedAnimalsIdRoute: AuthenticatedAnimalsIdRoute,
+  AuthenticatedReportsIdRoute: AuthenticatedReportsIdRoute,
   AuthenticatedAnimalsIndexRoute: AuthenticatedAnimalsIndexRoute,
+  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
