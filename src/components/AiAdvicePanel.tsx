@@ -4,9 +4,10 @@ import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SpeakButton } from "@/components/VoiceButton";
 import { useI18n } from "@/lib/i18n";
-import { getAiAdvice, type AiAdvice } from "@/lib/ai-advice.functions";
+import { getAiAdvice, type AiAdvice, AiInput } from "@/lib/ai-advice.functions";
+import type { z } from "zod";
 
-type Props = Omit<Parameters<typeof getAiAdvice>[0]["data"], "lang">;
+type Props = Omit<z.infer<typeof AiInput>, "lang">;
 
 export function AiAdvicePanel(props: Props) {
   const { lang } = useI18n();

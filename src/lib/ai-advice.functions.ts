@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const Input = z.object({
+export const AiInput = z.object({
   species: z.string().max(30),
   breed: z.string().max(60).nullable(),
   ageMonths: z.number().nullable(),
@@ -61,7 +61,7 @@ keep language very simple for farmers. Write all text fields in the requested la
 
 export const getAiAdvice = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => Input.parse(d))
+  .inputValidator((d: unknown) => AiInput.parse(d))
   .handler(async ({ data }): Promise<{ advice: AiAdvice | null; error: string | null }> => {
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) return { advice: null, error: "AI is not configured." };
