@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RiskBadge } from "@/components/RiskBadge";
 import { SpeakButton, VoiceButton } from "@/components/VoiceButton";
+import { AiAdvicePanel } from "@/components/AiAdvicePanel";
 
 export const Route = createFileRoute("/_authenticated/report")({
   validateSearch: z.object({ animal: z.string().optional() }),
@@ -132,6 +133,20 @@ function ReportPage() {
           </div>
           <Button size="lg" className="mt-5 h-12 w-full text-base" onClick={submit} disabled={busy}>{t("submit")}</Button>
         </section>
+      )}
+
+      {result && animal && (
+        <AiAdvicePanel
+          species={animal.species}
+          breed={animal.breed}
+          ageMonths={animal.age_months}
+          symptoms={symptoms.map((id) => SYMPTOMS.find((s) => s.id === id)?.en ?? id)}
+          temperatureC={temp ? Number(temp) : null}
+          durationDays={days ? Number(days) : null}
+          affectedCount={Number(count) || 1}
+          notes={notes}
+          ruleRisk={result.level}
+        />
       )}
     </div>
   );
