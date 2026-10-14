@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as VetLoginRouteImport } from './routes/vet-login'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -41,6 +42,11 @@ const AuthRoute = AuthRouteImport.update({
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VetLoginRoute = VetLoginRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vet-login': typeof VetLoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vet-login': typeof VetLoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/knowledge': typeof KnowledgeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vet-login': typeof VetLoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/knowledge'
+    | '/reset-password'
     | '/vet-login'
     | '/dashboard'
     | '/notifications'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/knowledge'
+    | '/reset-password'
     | '/vet-login'
     | '/dashboard'
     | '/notifications'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/knowledge'
+    | '/reset-password'
     | '/vet-login'
     | '/_authenticated/dashboard'
     | '/_authenticated/notifications'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   VetLoginRoute: typeof VetLoginRoute
 }
 
@@ -230,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge'
       fullPath: '/knowledge'
       preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vet-login': {
@@ -337,6 +357,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   KnowledgeRoute: KnowledgeRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   VetLoginRoute: VetLoginRoute,
 }
 export const routeTree = rootRouteImport
