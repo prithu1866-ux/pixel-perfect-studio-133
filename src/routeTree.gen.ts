@@ -20,6 +20,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedReportRouteImport } from './routes/_authenticated/report'
 import { Route as AuthenticatedVaccinationsRouteImport } from './routes/_authenticated/vaccinations'
 import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/vet'
+import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AuthenticatedAnimalsIndexRouteImport } from './routes/_authenticated/animals.index'
 import { Route as AuthenticatedAnimalsIdRouteImport } from './routes/_authenticated/animals.$id'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
@@ -81,6 +82,11 @@ const AuthenticatedVetRoute = AuthenticatedVetRouteImport.update({
   path: '/vet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiTtsRoute = ApiTtsRouteImport.update({
+  id: '/api/tts',
+  path: '/api/tts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAnimalsIndexRoute =
   AuthenticatedAnimalsIndexRouteImport.update({
     id: '/animals/',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/report': typeof AuthenticatedReportRoute
   '/vaccinations': typeof AuthenticatedVaccinationsRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/api/tts': typeof ApiTtsRoute
   '/animals/$id': typeof AuthenticatedAnimalsIdRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/animals/': typeof AuthenticatedAnimalsIndexRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/report': typeof AuthenticatedReportRoute
   '/vaccinations': typeof AuthenticatedVaccinationsRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/api/tts': typeof ApiTtsRoute
   '/animals/$id': typeof AuthenticatedAnimalsIdRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/animals': typeof AuthenticatedAnimalsIndexRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/_authenticated/report': typeof AuthenticatedReportRoute
   '/_authenticated/vaccinations': typeof AuthenticatedVaccinationsRoute
   '/_authenticated/vet': typeof AuthenticatedVetRoute
+  '/api/tts': typeof ApiTtsRoute
   '/_authenticated/animals/$id': typeof AuthenticatedAnimalsIdRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/animals/': typeof AuthenticatedAnimalsIndexRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/vaccinations'
     | '/vet'
+    | '/api/tts'
     | '/animals/$id'
     | '/reports/$id'
     | '/animals/'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/vaccinations'
     | '/vet'
+    | '/api/tts'
     | '/animals/$id'
     | '/reports/$id'
     | '/animals'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/_authenticated/report'
     | '/_authenticated/vaccinations'
     | '/_authenticated/vet'
+    | '/api/tts'
     | '/_authenticated/animals/$id'
     | '/_authenticated/reports/$id'
     | '/_authenticated/animals/'
@@ -213,6 +225,7 @@ export interface RootRouteChildren {
   KnowledgeRoute: typeof KnowledgeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   VetLoginRoute: typeof VetLoginRoute
+  ApiTtsRoute: typeof ApiTtsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -294,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVetRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/tts': {
+      id: '/api/tts'
+      path: '/api/tts'
+      fullPath: '/api/tts'
+      preLoaderRoute: typeof ApiTtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/animals/': {
       id: '/_authenticated/animals/'
       path: '/animals'
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeRoute: KnowledgeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   VetLoginRoute: VetLoginRoute,
+  ApiTtsRoute: ApiTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
