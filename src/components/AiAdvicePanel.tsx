@@ -48,7 +48,7 @@ export function AiAdvicePanel(props: Props) {
     <section className="rounded-2xl border bg-card p-5 shadow-card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-xl font-semibold"><Sparkles className="size-5 text-leaf" />{hi ? "AI विश्लेषण" : "AI analysis"}</h2>
-        <Button onClick={analyse} disabled={busy} variant={advice ? "outline" : "default"}>
+        <Button onClick={() => analyse()} disabled={busy} variant={advice ? "outline" : "default"}>
           {busy ? <Loader2 className="animate-spin" /> : <Sparkles />}
           {busy ? (hi ? "विश्लेषण हो रहा है…" : "Analysing…") : advice ? (hi ? "फिर से" : "Re-analyse") : hi ? "संभावित इलाज और टीके देखें" : "Get possible treatment & vaccines"}
         </Button>
