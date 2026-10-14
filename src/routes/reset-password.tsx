@@ -41,11 +41,11 @@ function ResetPassword() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw !== pw2) return toast.error(hi ? "पासवर्ड मेल नहीं खाते।" : "Passwords do not match.");
+    if (pw !== pw2) { toast.error(hi ? "पासवर्ड मेल नहीं खाते।" : "Passwords do not match."); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(hi ? "पासवर्ड बदल गया।" : "Password updated.");
     nav({ to: "/dashboard" });
   };

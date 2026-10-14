@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ForgotPasswordLink } from "@/components/ForgotPassword";
 import { useState } from "react";
 import { Stethoscope } from "lucide-react";
 import { toast } from "sonner";
