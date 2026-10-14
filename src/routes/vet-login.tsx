@@ -84,6 +84,7 @@ function VetLogin() {
             )}
             <div><Label>Email</Label><Input type="email" required value={f.email} onChange={set("email")} /></div>
             <div><Label>Password</Label><Input type="password" required minLength={6} value={f.password} onChange={set("password")} /></div>
+            {mode === "in" && <div className="text-right"><ForgotPasswordLink email={f.email} /></div>}
             <Button type="submit" size="lg" className="h-11 w-full" disabled={busy}>{mode === "in" ? "Sign in to portal" : "Create vet account"}</Button>
           </form>
           <button onClick={() => setMode(mode === "in" ? "up" : "in")} className="mt-5 w-full text-center text-sm text-primary hover:underline">

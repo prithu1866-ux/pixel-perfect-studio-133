@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
 import { LangToggle } from "@/components/AppShell";
 import { useI18n } from "@/lib/i18n";
+import { ForgotPasswordLink } from "@/components/ForgotPassword";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -96,6 +97,7 @@ function AuthPage() {
           )}
           <div><Label>Email</Label><Input type="email" required value={form.email} onChange={set("email")} /></div>
           <div><Label>{lang === "hi" ? "पासवर्ड" : "Password"}</Label><Input type="password" required minLength={6} value={form.password} onChange={set("password")} /></div>
+          {mode === "in" && <div className="text-right"><ForgotPasswordLink email={form.email} /></div>}
           <Button type="submit" size="lg" className="h-11 w-full" disabled={busy}>{mode === "in" ? (lang === "hi" ? "लॉग इन" : "Sign in") : lang === "hi" ? "खाता बनाएँ" : "Create account"}</Button>
         </form>
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><div className="h-px flex-1 bg-border" />or<div className="h-px flex-1 bg-border" /></div>
