@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SpeakButton } from "@/components/VoiceButton";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, type Lang } from "@/lib/i18n";
 import { getAiAdvice, type AiAdvice, AiInput } from "@/lib/ai-advice.functions";
 import type { z } from "zod";
 
@@ -14,22 +14,33 @@ export function AiAdvicePanel(props: Props) {
   const run = useServerFn(getAiAdvice);
   const [busy, setBusy] = useState(false);
   const [advice, setAdvice] = useState<AiAdvice | null>(null);
+  const [adviceLang, setAdviceLang] = useState<Lang | null>(null);
   const [error, setError] = useState<string | null>(null);
   const hi = lang === "hi";
+  const reqId = useRef(0);
 
-  const analyse = async () => {
+  const analyse = async (target: Lang = lang) => {
+    const id = ++reqId.current;
     setBusy(true);
     setError(null);
     try {
-      const r = await run({ data: { ...props, lang } });
+      const r = await run({ data: { ...props, lang: target } });
+      if (id !== reqId.current) return;
       setAdvice(r.advice);
+      setAdviceLang(r.advice ? target : null);
       setError(r.error);
     } catch {
-      setError(hi ? "विश्लेषण नहीं हो सका।" : "Analysis failed. Please try again.");
+      if (id === reqId.current) setError(target === "hi" ? "विश्लेषण नहीं हो सका।" : "Analysis failed. Please try again.");
     } finally {
-      setBusy(false);
+      if (id === reqId.current) setBusy(false);
     }
   };
+
+  // Switching the language after an answer re-asks the AI in the new language.
+  useEffect(() => {
+    if (advice && adviceLang && adviceLang !== lang && !busy) void analyse(lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
   const likely: Record<string, string> = hi ? { low: "कम", moderate: "मध्यम", high: "अधिक" } : { low: "Low", moderate: "Moderate", high: "High" };
 
