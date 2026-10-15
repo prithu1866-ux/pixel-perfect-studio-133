@@ -17,3 +17,4 @@
 - Notifications and report status changes are written by DB triggers (security definer), not client code.
 - Offline symptom reports queue in localStorage with a unique `client_id` for idempotent resend (`src/lib/offline.ts`).
 - UI text is bilingual via `src/lib/i18n.tsx` (`t()` for UI keys, `pick()` for {en, hi} content).
+- Read-aloud (src/lib/speech.ts) picks the language from the text itself; it uses a device voice when one exists, else the signed-in-only /api/tts AI speech route — many devices have no Hindi voice.
