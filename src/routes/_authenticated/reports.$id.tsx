@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RiskBadge, StatusPill } from "@/components/RiskBadge";
-import { SpeakButton } from "@/components/VoiceButton";
 import { AiAdvicePanel } from "@/components/AiAdvicePanel";
+import { VeterinarianResponse } from "@/components/VeterinarianResponse";
 
 export const Route = createFileRoute("/_authenticated/reports/$id")({
-  head: () => ({ meta: [{ title: "Report details — VETSENSE AI" }, { name: "description", content: "Symptom report and veterinary response." }, { property: "og:title", content: "Report details — VETSENSE AI" }, { property: "og:description", content: "Symptom report and veterinary response." }] }),
+  head: () => ({ meta: [{ title: "Report details — VETSENSE AI" }, { name: "description", content: "Symptom report and veterinary response." }, { property: "og:title", content: "Report details — VETSENSE AI" }, { property: "og:description", content: "Symptom report and veterinary response." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ReportDetail,
 });
 
@@ -78,29 +78,7 @@ function ReportDetail() {
       <section className="rounded-2xl border bg-card p-6 shadow-card">
         <h2 className="flex items-center gap-2 text-lg font-semibold"><Stethoscope className="size-5 text-primary" />{lang === "hi" ? "पशु चिकित्सक की सलाह" : "Veterinarian's response"}</h2>
         {data.assessments.length === 0 && <p className="mt-2 text-sm text-muted-foreground">{lang === "hi" ? "अभी जवाब नहीं आया।" : "Awaiting review."}</p>}
-        {data.assessments.map((a) => {
-          const meds = (a.medications as Med[] | null) ?? [];
-          return (
-            <div key={a.id} className="mt-4 rounded-xl bg-secondary/60 p-4 text-sm">
-              <div className="flex items-center justify-between gap-2">
-                <strong className="text-base">{a.provisional_diagnosis}</strong>
-                <div className="flex items-center gap-2">{a.priority && <RiskBadge level={a.priority} />}<SpeakButton text={[a.provisional_diagnosis, a.treatment, ...meds.map((m) => `${m.name} ${m.dose} ${m.frequency} ${m.duration}`), a.advice].filter(Boolean).join(". ")} /></div>
-              </div>
-              {meds.length > 0 && (
-                <div className="mt-3 overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="text-muted-foreground"><tr><th className="py-1 pr-2">{lang === "hi" ? "दवा" : "Medicine"}</th><th className="pr-2">{lang === "hi" ? "मात्रा" : "Dose"}</th><th className="pr-2">{lang === "hi" ? "कितनी बार" : "How often"}</th><th>{lang === "hi" ? "कितने दिन" : "Duration"}</th></tr></thead>
-                    <tbody>{meds.map((m, i) => <tr key={i} className="border-t"><td className="py-1 pr-2 font-medium">{m.name}</td><td className="pr-2">{m.dose}</td><td className="pr-2">{m.frequency}</td><td>{m.duration}</td></tr>)}</tbody>
-                  </table>
-                </div>
-              )}
-              {a.treatment && <p className="mt-2"><b>Treatment:</b> {a.treatment}</p>}
-              {a.advice && <p className="mt-1"><b>Advice:</b> {a.advice}</p>}
-              {a.follow_up_date && <p className="mt-1"><b>Follow-up:</b> {a.follow_up_date}</p>}
-              <p className="mt-2 text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
-            </div>
-          );
-        })}
+        {data.assessments.map((a) => <VeterinarianResponse key={a.id} assessment={a} />)}
         {isVet && <AssessmentForm reportId={r.id} status={r.status} defaultPriority={r.risk_level} />}
       </section>
     </div>
@@ -119,9 +97,10 @@ function AssessmentForm({ reportId, status, defaultPriority }: { reportId: strin
   const setMed = (i: number, k: keyof Med, v: string) => setMeds(meds.map((m, j) => (j === i ? { ...m, [k]: v.slice(0, 100) } : m)));
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     const medications = meds.filter((m) => m.name.trim());
     const { error } = await supabase.from("assessments").insert({
-      report_id: reportId, vet_id: user!.id, provisional_diagnosis: f.provisional_diagnosis, treatment: f.treatment || null,
+      report_id: reportId, vet_id: user.id, provisional_diagnosis: f.provisional_diagnosis, treatment: f.treatment || null,
       advice: f.advice || null, follow_up_date: f.follow_up_date || null, priority: f.priority, medications,
     });
     if (error) { toast.error(error.message); return; }
