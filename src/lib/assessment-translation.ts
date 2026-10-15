@@ -14,6 +14,10 @@ export function preservePrescription(original: AssessmentContent, translated: As
   if (original.medications.length !== translated.medications.length) throw new Error("Incomplete medication translation.");
   return {
     ...translated,
-    medications: translated.medications.map((m, i) => ({ ...m, name: original.medications[i].name, dose: original.medications[i].dose })),
+    medications: translated.medications.map((m, i) => {
+      const source = original.medications[i];
+      if (!source) throw new Error("Incomplete medication translation.");
+      return { ...m, name: source.name, dose: source.dose };
+    }),
   };
 }
