@@ -1,5 +1,7 @@
 # VETSENSE AI roadmap
 
+- [ ] Translate veterinarian responses into Hindi automatically on language change, with translated read-aloud
+
 - [x] Phase 1 core: sign-in with roles, dashboard, animal registry, symptom reports + rule triage, vet case queue + assessments, vaccinations, Hindi/English, voice input/read-aloud, offline report queue, notifications
 - [ ] Photo uploads on symptom reports
 - [ ] Installable app (PWA) with full offline caching
