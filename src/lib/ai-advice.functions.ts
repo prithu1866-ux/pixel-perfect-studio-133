@@ -77,7 +77,11 @@ Rule-based risk level already computed: ${data.ruleRisk}`;
       headers: { "Content-Type": "application/json", "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch" },
       body: JSON.stringify({
         model: "openai/gpt-6-astra",
-        instructions: SYSTEM,
+        instructions:
+          SYSTEM +
+          (data.lang === "hi"
+            ? "\nIMPORTANT: Write EVERY text field (summary, condition names and reasons, first aid, treatments, notes, vaccine names, diseases, timing, urgency) in simple Hindi using Devanagari script. Do not answer in English, even though the symptoms are listed in English. You may add a common English disease or vaccine name in brackets after the Hindi."
+            : "\nIMPORTANT: Write every text field in simple English."),
         input: [{ role: "user", content: userText }],
         stream: true,
         store: false,
